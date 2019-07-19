@@ -45,12 +45,6 @@ int main() {
     sf::RenderWindow root(sf::VideoMode(screenWidth, screenHeight), "Ray Marching", sf::Style::Fullscreen);
     root.setMouseCursorVisible(false);
 
-    sf::Font font;
-    if (!font.loadFromFile("comic.ttf")) {
-        std::cout << "Error loading comic.ttf" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
     std::vector<sf::CircleShape> circles;
     for (int i = 0; i < 12; ++i) {
         circles.push_back(sf::CircleShape(rand() % 25 + 75));
