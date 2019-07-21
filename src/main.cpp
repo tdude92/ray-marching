@@ -24,6 +24,7 @@ void march(sf::Vector2f lightSource, sf::VertexArray &pts, sf::VertexArray &illu
 
         raySlopeX = cos(toRadians(i) / 4);
         raySlopeY = sin(toRadians(i) / 4);
+        
         while (currentRayPos.x >= 0 && currentRayPos.x <= screenWidth && currentRayPos.y >= 0 && currentRayPos.y <= screenHeight) {
             currentRayPos.x += raySlopeX * distToClosestShape;
             currentRayPos.y += raySlopeY * distToClosestShape;
@@ -31,6 +32,7 @@ void march(sf::Vector2f lightSource, sf::VertexArray &pts, sf::VertexArray &illu
 
             if (distToClosestShape <= 1) {
                 illumination.append(sf::Vertex(currentRayPos, sf::Color::Red));
+                illumination.append(sf::Vertex(sf::Vector2f(currentRayPos.x + 10*raySlopeX, currentRayPos.y + 10*raySlopeY), sf::Color::Red));
                 break;
             }
         }
@@ -46,26 +48,31 @@ int main() {
     root.setMouseCursorVisible(false);
 
     std::vector<sf::CircleShape> circles;
-    for (int i = 0; i < 12; ++i) {
-        circles.push_back(sf::CircleShape(rand() % 25 + 75));
+    for (int i = 0; i < 6; ++i) {
+        circles.push_back(sf::CircleShape(rand() % 25 + 100));
         sf::CircleShape &circle = circles[circles.size() - 1];
 
         circle.setOrigin(circle.getRadius(), circle.getRadius());
-        circle.setFillColor(sf::Color(0, 0, 0));
+        circle.setFillColor(sf::Color(20, 0, 0));
         circle.setPosition(rand() % screenWidth, rand() % screenHeight);
     }
     
     // Ray marching.
     sf::VertexArray pts(sf::Lines, 2880);
-    sf::VertexArray illumination(sf::Points);
+    sf::VertexArray illumination(sf::Lines);
     sf::Vector2f lightSource(640, 360);
     march(lightSource, pts, illumination, circles);
 
     sf::Mouse::setPosition(sf::Vector2i(lightSource.x, lightSource.y));
     sf::Vector2i prevPos = sf::Mouse::getPosition();
+    sf::Event event;
     while (root.isOpen()) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            root.close();
+        while(root.pollEvent(event)) {
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    root.close();
+                }
+            }
         }
 
         if (sf::Mouse::getPosition() != prevPos) {
